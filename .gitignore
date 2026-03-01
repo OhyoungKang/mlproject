@@ -1,6 +1,3 @@
-# Python packaging
-*.egg-info/
-
 # Virtual env
 .venv/
 .env
