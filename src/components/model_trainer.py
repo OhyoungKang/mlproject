@@ -109,7 +109,7 @@ class ModelTrainer:
 
             models = {
                 "Linear Regression": LinearRegression(),
-                "Lasso": Lasso(max_iter=1000),
+                "Lasso": Lasso(max_iter=10000),
                 "Ridge": Ridge(),
                 "K-Neighbors Regressor": KNeighborsRegressor(),
                 "Decision Tree": DecisionTreeRegressor(random_state=42),
@@ -127,7 +127,7 @@ class ModelTrainer:
                 X_train, y_train, X_test, y_test,
                 models,
                 param=PARAM_GRID,
-                search_type='random'
+                    search_type='random'
             )
 
             # 결과 요약 (테스트 R² 기준 정렬)

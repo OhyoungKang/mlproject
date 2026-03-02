@@ -33,6 +33,26 @@ def save_object(file_path, obj):
     except Exception as e:
         raise CustomException(e,sys) from e
 
+
+# ============================================================================
+# n_iter size 계산 for randomized search
+# ============================================================================
+
+def calculate_param_space_size(param_grid):
+    """
+    파라미터 그리드의 총 조합 수 계산
+    """
+    if not param_grid:  # 빈 딕셔너리 체크
+        return 0
+
+    total = 1
+    for value in param_grid.values():
+        if isinstance(value, list):
+            total *= len(value)
+
+    return total
+
+
 # ============================================================================
 # 평가 지표 계산 함수
 # ============================================================================
@@ -90,29 +110,38 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param=None, search
         report = {}
         best_models = {}
 
-        for name, model in models.items():
+        for model_name, model in models.items():
             logging.info(f"{'=' * 40}")
-            logging.info(f"{name} 처리 중...")
+            logging.info(f"{model_name} 처리 중...")
             logging.info('=' * 40)
 
             # 하이퍼파라미터가 있으면 튜닝
-            if param and name in param and param[name]:
+            if param and model_name in param and param[model_name]:
                 logging.info(f"하이퍼파라미터 튜닝 중...")
 
+                # 파라미터 공간 크기 계산
+                param_space_size = calculate_param_space_size(param[model_name])
+                logging.info(f"   파라미터 조합: {param_space_size}개")
+
                 if search_type == 'grid':
+                    # GridSearchCV (작은 파라미터 공간)
+                    logging.info("탐색 방식: GridSearchCV (전체 탐색)")
                     search = GridSearchCV(
-                        model,
-                        param[name],
+                        estimator=model,
+                        param_grid=param[model_name],
                         cv=5,
                         scoring='r2',
                         n_jobs=-1,
                         verbose=0
                     )
                 else:  # random
+                    # RandomizedSearchCV (큰 파라미터 공간)
+                    n_iter = min(15, param_space_size)
+                    logging.info(f"탐색 방식: RandomizedSearchCV ({n_iter}회 샘플")
                     search = RandomizedSearchCV(
-                        model,
-                        param[name],
-                        n_iter=10,
+                        estimator=model,
+                        param_distributions=param[model_name],
+                        n_iter=n_iter,
                         cv=5,
                         scoring='r2',
                         random_state=42,
@@ -138,11 +167,11 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param=None, search
             test_metrics = calculate_metrics(y_test, y_test_pred)
 
             # 결과 저장
-            report[name] = {
+            report[model_name] = {
                 'train': train_metrics,
                 'test': test_metrics
             }
-            best_models[name] = best_model
+            best_models[model_name] = best_model
 
             # 상세 로깅
             logging.info(f"훈련 데이터 성능:")
