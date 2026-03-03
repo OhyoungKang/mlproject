@@ -45,11 +45,13 @@ PARAM_GRID = {
         'max_depth': [5, 10, 15, 20, None],
         'min_samples_split': [2, 5, 10],
         'min_samples_leaf': [1, 2, 4],
-        'criterion': ['squared_error', 'absolute_error']
+        'criterion': ['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
+        'splitter': ['best', 'random'],
+        'max_features': ['auto', 'sqrt', 'log2', None]
     },
 
     "Random Forest Regressor": {
-        'n_estimators': [50, 100, 200],
+        'n_estimators': [8, 16, 32, 64, 128, 256],
         'max_depth': [10, 20, 30, None],
         'min_samples_split': [2, 5],
         'min_samples_leaf': [1, 2],
@@ -57,22 +59,28 @@ PARAM_GRID = {
     },
 
     "XGBRegressor": {
-        'n_estimators': [100, 200],
+        'n_estimators': [8, 16, 32, 64, 128, 256],
         'max_depth': [3, 5, 7],
         'learning_rate': [0.01, 0.1, 0.3],
-        'subsample': [0.8, 0.9, 1.0],
-        'colsample_bytree': [0.8, 0.9, 1.0]
+        'subsample': [0.8, 0.9, 1.0]
+    },
+
+    "Gradient Boosting": {
+        'n_estimators': [8, 16, 32, 64, 128, 256],
+        'max_depth': [3, 5, 7],
+        'learning_rate': [0.01, 0.1, 0.3],
+        'subsample': [0.6, 0.7, 0.8, 0.9, 1.0]
     },
 
     "CatBoosting Regressor": {
-        'iterations': [100, 200],
+        'iterations': [30, 50, 100],
         'depth': [4, 6, 8],
         'learning_rate': [0.01, 0.05, 0.1],
         'l2_leaf_reg': [1, 3, 5]
     },
 
     "AdaBoost Regressor": {
-        'n_estimators': [50, 100, 200],
+        'n_estimators': [8, 16, 32, 64, 128, 256],
         'learning_rate': [0.01, 0.1, 1.0],
         'loss': ['linear', 'square', 'exponential']
     }
@@ -115,6 +123,7 @@ class ModelTrainer:
                 "Decision Tree": DecisionTreeRegressor(random_state=42),
                 "Random Forest Regressor": RandomForestRegressor(random_state=42),
                 "XGBRegressor": XGBRegressor(verbosity=0, n_jobs=-1, random_state=42),
+                "Gradient Boosting": XGBRegressor(verbosity=0, n_jobs=-1, random_state=42),
                 "CatBoosting Regressor": CatBoostRegressor(verbose=False, random_state=42),
                 "AdaBoost Regressor": AdaBoostRegressor(random_state=42)
             }
@@ -127,7 +136,7 @@ class ModelTrainer:
                 X_train, y_train, X_test, y_test,
                 models,
                 param=PARAM_GRID,
-                    search_type='random'
+                search_type='random'
             )
 
             # 결과 요약 (테스트 R² 기준 정렬)

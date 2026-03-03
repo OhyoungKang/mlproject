@@ -121,7 +121,7 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param=None, search
 
                 # 파라미터 공간 크기 계산
                 param_space_size = calculate_param_space_size(param[model_name])
-                logging.info(f"   파라미터 조합: {param_space_size}개")
+                logging.info(f"파라미터 조합: {param_space_size}개")
 
                 if search_type == 'grid':
                     # GridSearchCV (작은 파라미터 공간)
@@ -137,7 +137,7 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param=None, search
                 else:  # random
                     # RandomizedSearchCV (큰 파라미터 공간)
                     n_iter = min(15, param_space_size)
-                    logging.info(f"탐색 방식: RandomizedSearchCV ({n_iter}회 샘플")
+                    logging.info(f"탐색 방식: RandomizedSearchCV ({n_iter})회 샘플")
                     search = RandomizedSearchCV(
                         estimator=model,
                         param_distributions=param[model_name],
