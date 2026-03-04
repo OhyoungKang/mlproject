@@ -33,6 +33,20 @@ def save_object(file_path, obj):
     except Exception as e:
         raise CustomException(e,sys) from e
 
+def load_object(file_path):
+    """
+    pickle 파일에서 객체 로드
+    """
+    try:
+        with open(file_path, "rb") as file_obj:
+            obj = dill.load(file_obj)
+
+        logging.info(f"객체 로드: {file_path}")
+        return obj
+
+    except Exception as e:
+        raise CustomException(e, sys) from e
+
 
 # ============================================================================
 # n_iter size 계산 for randomized search
