@@ -6,5 +6,7 @@ catboost
 xgboost
 mlflow
 dill
+gunicorn
+flask
 
 # -e .
