@@ -1,12 +1,12 @@
-pandas
-numpy
+pandas==2.1.4
+numpy==1.26.4
 # seaborn
-scikit-learn
+scikit-learn==1.4.2
 # catboost
 # xgboost
 # mlflow
-dill
-gunicorn
-flask
+dill==0.3.8
+gunicorn==21.2.0
+flaska==3.0.3
 
 # -e .
