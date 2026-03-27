@@ -7,6 +7,6 @@ xgboost
 mlflow
 dill
 gunicorn
-flaska
+flask
 
 # -e .
